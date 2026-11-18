@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .crosscheck import cross_check
 from .flows import analyze_flow, group_flows
 from .pcap import read_segments
 
@@ -23,3 +24,10 @@ def analyze_capture(data: bytes) -> dict:
         "skipped": sum(1 for r in results if r["status"] == "skipped"),
     }
     return {"summary": summary, "flows": results}
+
+
+def cross_check_captures(ingress_data: bytes, egress_data: bytes) -> dict:
+    """Decode two captures and run the dual-point forwarding cross-check."""
+    ingress_segments = read_segments(ingress_data)
+    egress_segments = read_segments(egress_data)
+    return cross_check(ingress_segments, egress_segments)
